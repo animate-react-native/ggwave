@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      The modem listens for tones, so it needs the microphone. Declared by the
+      library rather than left to the app, because an app that installs this
+      module cannot use it without the permission, and a missing RECORD_AUDIO is
+      reported by Oboe as a stream that simply will not open.
+
+      Nothing else is declared. There is no foreground service and no background
+      audio mode: the link exists only while a board is open and the app is in
+      front.
+    -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+</manifest>
