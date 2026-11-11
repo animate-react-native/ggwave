@@ -1,0 +1,139 @@
+{
+  "name": "@animatereactnative/ggwave",
+  "version": "0.1.1",
+  "description": "Data over sound for React Native. A Nitro module wrapping ggwave: two phones pass bytes through the air with no network, no pairing and no account.",
+  "main": "lib/index",
+  "module": "lib/index",
+  "types": "lib/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "codegenConfig": {
+    "name": "NitroGgwaveSpec",
+    "type": "modules",
+    "jsSrcsDir": "./src",
+    "android": {
+      "javaPackageName": "com.margelo.nitro.ggwave"
+    }
+  },
+  "files": [
+    "src",
+    "react-native.config.js",
+    "lib",
+    "nitrogen",
+    "android/build.gradle",
+    "android/gradle.properties",
+    "android/fix-prefab.gradle",
+    "android/CMakeLists.txt",
+    "android/src",
+    "cpp",
+    "ios/**/*.h",
+    "ios/**/*.m",
+    "ios/**/*.mm",
+    "ios/**/*.cpp",
+    "ios/**/*.swift",
+    "app.plugin.js",
+    "nitro.json",
+    "*.podspec",
+    "README.md"
+  ],
+  "scripts": {
+    "prepare": "bun run clean && tsc",
+    "check": "bun run typecheck && bun run lint && bun run test:text && bun run test:host && bun run test:modem",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\"",
+    "test:text": "node --experimental-strip-types tests/text.test.ts",
+    "test:host": "mkdir -p .build && c++ -std=c++20 -O2 -Wall -I cpp/vendor/ggwave/include tests/host-roundtrip.cpp cpp/vendor/ggwave/src/ggwave.cpp -o .build/host-roundtrip && ./.build/host-roundtrip",
+    "test:modem": "mkdir -p .build && c++ -std=c++20 -O2 -Wall -Wextra -I cpp/vendor/ggwave/include tests/host-modem.cpp cpp/modem/Modem.cpp cpp/vendor/ggwave/src/ggwave.cpp -o .build/host-modem && ./.build/host-modem",
+    "release": "release-it",
+    "example": "bun --cwd example",
+    "example:android": "bun --cwd example run android",
+    "example:ios": "bun --cwd example run ios",
+    "clean": "rm -rf android/build node_modules/**/android/build lib tsconfig.tsbuildinfo"
+  },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "nitro",
+    "nitro-modules",
+    "ggwave",
+    "data-over-sound",
+    "audio",
+    "ultrasound",
+    "chirp",
+    "fsk",
+    "offline",
+    "peer-to-peer",
+    "local-first"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/animate-react-native/ggwave.git"
+  },
+  "author": "Catalin Miron <mironcatalin@gmail.com> (https://www.animatereactnative.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/animate-react-native/ggwave/issues"
+  },
+  "homepage": "https://github.com/animate-react-native/ggwave#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.15",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "nitrogen": "*",
+    "prettier": "^3.8.3",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-nitro-modules": "*",
+    "release-it": "^21.0.2",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.68.0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-nitro-modules": "*"
+  },
+  "peerDependenciesMeta": {
+    "react-native-nitro-modules": {
+      "optional": true
+    }
+  },
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false,
+    "semi": false
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release @animatereactnative/ggwave ${version}",
+      "tagName": "ggwave-v${version}",
+      "tagAnnotation": "@animatereactnative/ggwave ${version}",
+      "push": true
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": false
+    },
+    "hooks": {
+      "before:init": [
+        "git remote get-url origin | grep -q 'catalinmiron/chalk' || { echo 'Release from the chalk checkout, not from a clone of the library. The library repository is a snapshot: the next ggwave:push replaces its tree wholesale, so a version bump made over there is deleted.'; exit 1; }",
+        "bun run check"
+      ],
+      "after:npm:release": "GGWAVE_SKIP_CHECK=1 bun --cwd ../.. run ggwave:push \"feat: release @animatereactnative/ggwave ${version}\" ggwave-v${version}"
+    }
+  }
+}
